@@ -19,6 +19,7 @@ static CGFloat lySlowLowPassFilter(NSTimeInterval elapsed,
 
 
 #define kConstBallLength (50)
+#define kConstTargetLength (10)
 
 typedef NS_ENUM(NSUInteger, LYGameStatus) {
     LYGameStatusReady,
@@ -30,14 +31,13 @@ typedef NS_ENUM(NSUInteger, LYGameStatus) {
 @interface ViewController ()
 
 @property (nonatomic, strong) CMMotionManager *motionManager;
-
 @property (nonatomic, strong) UIView *ballView;
-
+@property (nonatomic, strong) UIView *targetView;
 @property (nonatomic, strong) CADisplayLink *displayLink;
 
 // game
 @property (nonatomic, assign) LYGameStatus gameStatus;
-@property (nonatomic, assign) NSUInteger gamePoint;
+@property (nonatomic, assign) NSUInteger gameScore;
 @property (nonatomic, strong) NSDate *gameStartDate;
 
 @property (nonatomic, assign) CGFloat ballSpeedX;
@@ -47,6 +47,7 @@ typedef NS_ENUM(NSUInteger, LYGameStatus) {
 //
 @property (nonatomic, strong) IBOutlet UILabel *gameScoreLabel;
 @property (nonatomic, strong) IBOutlet UILabel *gameStatusLabel;
+@property (nonatomic, strong) IBOutlet UIView *gameContainerView;
 
 @end
 
@@ -77,12 +78,11 @@ typedef NS_ENUM(NSUInteger, LYGameStatus) {
 
 - (void)customInitViews {
     self.ballView.center = self.view.center;
-    [self.view insertSubview:self.ballView atIndex:0];
+    [self.gameContainerView addSubview:self.ballView];
     
     self.gameStatusLabel.userInteractionEnabled = YES;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap)];
     [self.gameStatusLabel addGestureRecognizer:tap];
-    
 }
 
 #pragma mark - action
@@ -99,10 +99,15 @@ typedef NS_ENUM(NSUInteger, LYGameStatus) {
         NSTimeInterval gameTime = [date timeIntervalSinceDate:self.gameStartDate];
         if (gameTime < kConstGameTime) {
             // updateUI
-            self.gameScoreLabel.text = [NSString stringWithFormat:@"分数:%lu分", self.gamePoint];
+            self.gameScoreLabel.text = [NSString stringWithFormat:@"分数:%lu分", self.gameScore];
             self.gameStatusLabel.text = [NSString stringWithFormat:@"剩余时间：%.1f", (kConstGameTime - gameTime)];
             
             [self updateLocationWithAcceleration:self.motionManager.deviceMotion.gravity];
+            
+            if ([self checkTarget]) {
+                self.gameScore++;
+                [self generateTargetView];
+            }
         }
         else {
             // gameOver
@@ -115,9 +120,11 @@ typedef NS_ENUM(NSUInteger, LYGameStatus) {
 
 - (void)startGame {
     self.gameStatus = LYGameStatusRunning;
+    self.gameScore = 0;
     self.ballView.center = self.view.center;
     self.gameStartDate = [NSDate date];
     [self.displayLink setPaused:NO];
+    [self generateTargetView];
 }
 
 - (void)resetGame {
@@ -138,14 +145,14 @@ typedef NS_ENUM(NSUInteger, LYGameStatus) {
         self.ballView.centerY -= self.ballSpeedY * 100;
     }
     self.ballLastUpdateDate = [NSDate date];
-//    //    更新时间
+
     if (self.ballView.left < 0) {
         self.ballView.left = 0;
         self.ballSpeedX /= -1;
     }
 
-    if (self.ballView.right > self.view.width) {
-        self.ballView.right = self.view.width;
+    if (self.ballView.right > self.gameContainerView.width) {
+        self.ballView.right = self.gameContainerView.width;
         self.ballSpeedX /= -1;
     }
 
@@ -154,10 +161,28 @@ typedef NS_ENUM(NSUInteger, LYGameStatus) {
         self.ballSpeedY /= -1;
     }
 
-    if (self.ballView.bottom >= self.view.height) {
-        self.ballView.bottom = self.view.height;
+    if (self.ballView.bottom >= self.gameContainerView.height) {
+        self.ballView.bottom = self.gameContainerView.height;
         self.ballSpeedY /= -1;
     }
+}
+
+- (void)generateTargetView {
+    [self.gameContainerView addSubview:self.targetView];
+    
+    do {
+        self.targetView.center = CGPointMake(arc4random_uniform((int)self.gameContainerView.width - 2 * kConstTargetLength),
+                                             arc4random_uniform((int)self.gameContainerView.height - 2 * kConstTargetLength));
+        if ([self checkTarget]) {
+            continue;
+        }
+    }while (false);
+}
+
+- (BOOL)checkTarget {
+    CGFloat disX = (self.ballView.centerX - self.targetView.centerX);
+    CGFloat disY = (self.ballView.centerY - self.targetView.centerY);
+    return sqrt(disX * disX + disY * disY) <= (kConstBallLength / 2 + kConstTargetLength / 2);
 }
 
 #pragma mark - gettet
@@ -183,6 +208,15 @@ typedef NS_ENUM(NSUInteger, LYGameStatus) {
         _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(logicUpdate)];
     }
     return _displayLink;
+}
+
+- (UIView *)targetView {
+    if (!_targetView) {
+        _targetView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kConstTargetLength, kConstTargetLength)];
+        _targetView.ssCornerRadius = _targetView.width / 2;
+        _targetView.backgroundColor = [UIColor yellowColor];
+    }
+    return _targetView;
 }
 
 @end

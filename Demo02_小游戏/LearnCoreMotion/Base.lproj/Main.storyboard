@@ -30,17 +30,26 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gui-vC-c2l">
+                                <rect key="frame" x="0.0" y="100" width="375" height="567"/>
+                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="xf4-3P-Z1X" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="54" id="3vj-Ml-WIl"/>
-                            <constraint firstItem="KUE-ad-c3d" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="39" id="WPB-Q5-uuj"/>
-                            <constraint firstItem="xf4-3P-Z1X" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="39" id="g3g-xr-oaC"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="KUE-ad-c3d" secondAttribute="trailing" constant="49" id="xkB-5b-hDf"/>
+                            <constraint firstItem="xf4-3P-Z1X" firstAttribute="leading" secondItem="8Q9-QG-2Sl" secondAttribute="leading" constant="54" id="3vj-Ml-WIl"/>
+                            <constraint firstItem="8Q9-QG-2Sl" firstAttribute="bottom" secondItem="gui-vC-c2l" secondAttribute="bottom" id="DLn-bo-vSf"/>
+                            <constraint firstItem="8Q9-QG-2Sl" firstAttribute="trailing" secondItem="gui-vC-c2l" secondAttribute="trailing" id="N2P-Ot-bIO"/>
+                            <constraint firstItem="KUE-ad-c3d" firstAttribute="top" secondItem="8Q9-QG-2Sl" secondAttribute="top" constant="39" id="WPB-Q5-uuj"/>
+                            <constraint firstItem="gui-vC-c2l" firstAttribute="top" secondItem="xf4-3P-Z1X" secondAttribute="bottom" constant="20" id="YY3-IP-iIg"/>
+                            <constraint firstItem="xf4-3P-Z1X" firstAttribute="top" secondItem="8Q9-QG-2Sl" secondAttribute="top" constant="39" id="g3g-xr-oaC"/>
+                            <constraint firstItem="gui-vC-c2l" firstAttribute="leading" secondItem="8Q9-QG-2Sl" secondAttribute="leading" id="sBh-cG-PLk"/>
+                            <constraint firstItem="8Q9-QG-2Sl" firstAttribute="trailing" secondItem="KUE-ad-c3d" secondAttribute="trailing" constant="49" id="xkB-5b-hDf"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <viewLayoutGuide key="safeArea" id="8Q9-QG-2Sl"/>
                     </view>
                     <connections>
+                        <outlet property="gameContainerView" destination="gui-vC-c2l" id="GiV-8e-eef"/>
                         <outlet property="gameScoreLabel" destination="KUE-ad-c3d" id="6Dt-VD-F41"/>
                         <outlet property="gameStatusLabel" destination="xf4-3P-Z1X" id="51V-O8-xdh"/>
                     </connections>
