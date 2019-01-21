@@ -12,8 +12,7 @@
 
 static CGFloat lySlowLowPassFilter(NSTimeInterval elapsed,
                             GLfloat target,
-                            GLfloat current)
-{
+                            GLfloat current) {
     return current + (4.0 * elapsed * (target - current));
 }
 
@@ -102,7 +101,7 @@ typedef NS_ENUM(NSUInteger, LYGameStatus) {
             self.gameScoreLabel.text = [NSString stringWithFormat:@"分数:%lu分", self.gameScore];
             self.gameStatusLabel.text = [NSString stringWithFormat:@"剩余时间：%.1f", (kConstGameTime - gameTime)];
             
-            [self updateLocationWithAcceleration:self.motionManager.deviceMotion.gravity];
+            [self updateLocationWithAcceleration:self.motionManager.deviceMotion.gravity]; // self.motionManager.deviceMotion
             
             if ([self checkTarget]) {
                 self.gameScore++;
